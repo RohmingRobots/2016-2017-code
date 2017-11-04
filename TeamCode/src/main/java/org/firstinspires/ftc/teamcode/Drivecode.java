@@ -123,10 +123,17 @@ public class Drivecode extends LinearOpMode {
 
     double harvesterspeed = 0;
 
-    GamepadEdge egamepad1 = new GamepadEdge(gamepad1);
+    /* Declare extended gamepad */
+    GamepadEdge egamepad1;
+    GamepadEdge egamepad2;
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        /* Instantiate extended gamepad */
+        egamepad1 = new GamepadEdge(gamepad1);
+        egamepad2 = new GamepadEdge(gamepad2);
+
         robot.init(hardwareMap);
         robot.nautilus.enableLed(true);
 
@@ -135,14 +142,10 @@ public class Drivecode extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
+
+            /* Update extended gamepad */
             egamepad1.UpdateEdge();
-            telemetry.addLine("g | ")
-                    .addData("a", gamepad1.a);
-            telemetry.addLine("e | ")
-                    .addData("a", egamepad1.a)
-                    .addData("p", egamepad1.a_pressed)
-                    .addData("r", egamepad1.a_released);
-            telemetry.update();
+            egamepad2.UpdateEdge();
 
             Accelerator();
             CapBall();
@@ -153,7 +156,7 @@ public class Drivecode extends LinearOpMode {
             Telemetry();
 
             //CLOSING INFORMATION
-//            telemetry.update();
+            telemetry.update();
             robot.waitForTick(40);
             idle();
         }
@@ -256,7 +259,7 @@ public class Drivecode extends LinearOpMode {
     public void CapGate(){
 
         /* check if button has just been pressed */
-        if (egamepad1.a_pressed || egamepad1.a_released) {
+        if (egamepad1.a.pressed) {
             if (capgateservo==0.1)
                 capgateservo = 0.3;
             else if (capgateservo==0.3)
