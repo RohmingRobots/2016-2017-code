@@ -35,6 +35,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -67,6 +68,8 @@ import org.firstinspires.ftc.teamcode.RobotConifg;
     13 - 04/10/17 - Cleaned up codes
                     Added smooth acceleration and deceleration
  */
+
+
 
 
 @TeleOp(name="Drive: Drivecode", group="Drive")
@@ -113,13 +116,14 @@ public class Drivecode extends LinearOpMode {
     boolean gateOpen = true;
 
     // cap gate variables
-    boolean buttonA_pressed = false;
     double capgateservo = 0.1;
 
     RobotConifg         robot     = new RobotConifg();
     private ElapsedTime runtime   = new ElapsedTime();
 
     double harvesterspeed = 0;
+
+    GamepadEdge egamepad1 = new GamepadEdge(gamepad1);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -131,6 +135,15 @@ public class Drivecode extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
+            egamepad1.UpdateEdge();
+            telemetry.addLine("g | ")
+                    .addData("a", gamepad1.a);
+            telemetry.addLine("e | ")
+                    .addData("a", egamepad1.a)
+                    .addData("p", egamepad1.a_pressed)
+                    .addData("r", egamepad1.a_released);
+            telemetry.update();
+
             Accelerator();
             CapBall();
             CapGate();
@@ -140,7 +153,7 @@ public class Drivecode extends LinearOpMode {
             Telemetry();
 
             //CLOSING INFORMATION
-            telemetry.update();
+//            telemetry.update();
             robot.waitForTick(40);
             idle();
         }
@@ -243,9 +256,7 @@ public class Drivecode extends LinearOpMode {
     public void CapGate(){
 
         /* check if button has just been pressed */
-        if (gamepad1.a && !buttonA_pressed) {
-            /* this should only happen the first time we notice the button press */
-            buttonA_pressed = true;
+        if (egamepad1.a_pressed || egamepad1.a_released) {
             if (capgateservo==0.1)
                 capgateservo = 0.3;
             else if (capgateservo==0.3)
@@ -253,8 +264,6 @@ public class Drivecode extends LinearOpMode {
             else
                 capgateservo = 0.1;
         }
-        if (!gamepad1.a)
-            buttonA_pressed = false;
 
         robot.capgate.setPosition(capgateservo);
     }
