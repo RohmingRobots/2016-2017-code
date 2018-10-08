@@ -23,8 +23,8 @@ public class RobotConifg
     public DcMotor  rightMotor  = null;
     public DcMotor  harvester   = null;
     public DcMotor  accelerator = null;
-    public DcMotor  cap1 = null;
-    public DcMotor  cap2 = null;
+    //public DcMotor  cap1 = null;
+    //public DcMotor  cap2 = null;
     public Servo    leftslapper     = null;
     public Servo    rightslapper    = null;
     public Servo    gate            = null;
@@ -60,11 +60,11 @@ public class RobotConifg
         harvester   = hwMap.dcMotor.get("harvester");
         accelerator   = hwMap.dcMotor.get("accelerator");
 
-        cap1   = hwMap.dcMotor.get("cap1");
+       /* cap1   = hwMap.dcMotor.get("cap1");
         cap1.setDirection(DcMotor.Direction.REVERSE);
         cap2   = hwMap.dcMotor.get("cap2");
         cap2.setDirection(DcMotor.Direction.REVERSE);
-
+*/
         leftslapper     = hwMap.servo.get("leftslapper");
         rightslapper     = hwMap.servo.get("rightslapper");
 

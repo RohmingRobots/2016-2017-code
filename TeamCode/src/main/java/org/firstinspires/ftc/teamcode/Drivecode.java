@@ -69,7 +69,7 @@ import org.firstinspires.ftc.teamcode.RobotConifg;
  */
 
 
-@TeleOp(name="Drive: Drivecode", group="Drive")
+@TeleOp(name = "Drive: Drivecode", group = "Drive")
 //@Disabled
 
 public class Drivecode extends LinearOpMode {
@@ -112,8 +112,8 @@ public class Drivecode extends LinearOpMode {
     boolean lastGate = false;
     boolean gateOpen = true;
 
-    RobotConifg         robot     = new RobotConifg();
-    private ElapsedTime runtime   = new ElapsedTime();
+    RobotConifg robot = new RobotConifg();
+    private ElapsedTime runtime = new ElapsedTime();
 
     double harvesterspeed = 0;
 
@@ -143,8 +143,17 @@ public class Drivecode extends LinearOpMode {
     }
 
 
-    public void Accelerator(){
-        double Aspeed = 0;
+    public void Accelerator() {
+
+        if (gamepad2.b) {
+            robot.gate.setPosition(0);
+            robot.accelerator.setPower(1);
+        } else {
+            robot.gate.setPosition(0.65);
+            robot.accelerator.setPower(0);
+        }
+
+       /* double Aspeed = 0;
 
         fireCommand = gamepad2.a;
 
@@ -197,10 +206,11 @@ public class Drivecode extends LinearOpMode {
             robot.gate.setPosition(0);
         else
             robot.gate.setPosition(0.65);
+            */
     }
 
 
-    public void Harvester(){
+    public void Harvester() {
         //speed declaration
         if (gamepad2.dpad_up)
             harvesterspeed = -0.75;
@@ -213,30 +223,28 @@ public class Drivecode extends LinearOpMode {
     }
 
 
-    public void CapBall(){
+    public void CapBall() {
         double capPower1 = 0;
         double capPower2 = 0;
 
-        if (holdPosition){
+        if (holdPosition) {
 
-        }
-        else{
-            if (gamepad1.left_bumper){
+        } else {
+            if (gamepad1.left_bumper) {
                 capPower1 = -1;
                 capPower2 = -1;
-            }
-            else if (gamepad1.left_trigger > 0.5){
+            } else if (gamepad1.left_trigger > 0.5) {
                 capPower1 = 0.1;
                 capPower2 = 0.1;
             }
         }
 
-        robot.cap1.setPower(capPower1);
-        robot.cap2.setPower(capPower2);
+        // robot.cap1.setPower(capPower1);
+        //  robot.cap2.setPower(capPower2);
     }
 
 
-    public void CapGate(){
+    public void CapGate() {
         double servoval = 0;
         if (gamepad1.a)
             servoval = 0.5;
@@ -244,7 +252,7 @@ public class Drivecode extends LinearOpMode {
     }
 
 
-    public void Wings(){
+    public void Wings() {
         double servoval = 0;
         if (gamepad1.y || gamepad2.right_bumper)
             servoval = 0.6;
@@ -257,34 +265,34 @@ public class Drivecode extends LinearOpMode {
     }
 
 
-    public void DriveTrain(){
+    public void DriveTrain() {
+
         //Speed Changing
         boolean rbumper = gamepad1.right_bumper;
         boolean rtrigger = gamepad1.right_trigger > 0.5;
         boolean current = rbumper || rtrigger;
-        if (!lastSpeed && current){
+        if (!lastSpeed && current) {
             if (rbumper)
                 speed++;
             else if (rtrigger)
                 speed--;
 
-            if (speed > 2)
-                speed = 2;
+            if (speed > 7)
+                speed = 7;
             if (speed < 0)
                 speed = 0;
         }
         lastSpeed = current;
 
+
         //Set Motors
-        if (runtime.seconds() - accelerateStart < 0.4){
+        if (runtime.seconds() - accelerateStart < 0.4) {
             leftmotorS = speeds[speed] * (runtime.seconds() - accelerateStart) / 0.4;
             rightmotorS = speeds[speed] * (runtime.seconds() - accelerateStart) / 0.4;
-        }
-        else if (runtime.seconds() - decelerateStart < 0.4){
+        } else if (runtime.seconds() - decelerateStart < 0.4) {
             leftmotorS = (-1 * speeds[speed] * (runtime.seconds() - decelerateStart) / 0.4) + speeds[speed];
             rightmotorS = (-1 * speeds[speed] * (runtime.seconds() - decelerateStart) / 0.4) + speeds[speed];
-        }
-        else{
+        } else {
             leftmotorS = speeds[speed];
             rightmotorS = speeds[speed];
         }
@@ -296,7 +304,7 @@ public class Drivecode extends LinearOpMode {
             rightmotorS *= -1;
 
         //make dead zone for stopping
-        if (Math.abs(gamepad1.left_stick_x) < 0.1 && Math.abs(gamepad1.left_stick_y) < 0.1){
+        if (Math.abs(gamepad1.left_stick_x) < 0.1 && Math.abs(gamepad1.left_stick_y) < 0.1) {
             rightmotorS = 0;
             leftmotorS = 0;
         }
@@ -305,8 +313,7 @@ public class Drivecode extends LinearOpMode {
         if (leftmotorS != rightmotorS && accelerateMono) {
             accelerateStart = runtime.seconds();
             accelerateMono = false;
-        }
-        else if (leftmotorS == 0)
+        } else if (leftmotorS == 0)
             accelerateMono = true;
 
         //decelerate mono
@@ -315,24 +322,22 @@ public class Drivecode extends LinearOpMode {
         else if (!gamepad1.a)
             decelerateMono = true;
 
-        if (decelerate){
+        if (decelerate) {
             //initialize the decelerator timer start thing
             if (leftmotorS == 0 && decelerateInitMono) {
                 decelerateStart = runtime.seconds();
                 decelerateInitMono = false;
-            }
-            else if (leftmotorS != 0)
+            } else if (leftmotorS != 0)
                 decelerateInitMono = true;
         }
 
         //reverse conversions
-        if (gamepad1.b && !reverseMono){
+        if (gamepad1.b && !reverseMono) {
             reverseMono = true;
             reverse = !reverse;
-        }
-        else if (!gamepad1.b)
+        } else if (!gamepad1.b)
             reverseMono = false;
-        if (leftmotorS == rightmotorS){
+        if (leftmotorS == rightmotorS) {
             if (reverse) {
                 leftmotorS *= -1;
                 rightmotorS *= -1;
@@ -340,12 +345,12 @@ public class Drivecode extends LinearOpMode {
         }
 
         //gyro correct if going fast enough
-        if (Math.abs(leftmotorS) > 0.2){
+        if (Math.abs(leftmotorS) > 0.2) {
             gyroCorrect();
         }
 
         //make dead zone for stopping
-        if (Math.abs(gamepad1.left_stick_x) < 0.1 && Math.abs(gamepad1.left_stick_y) < 0.1){
+        if (Math.abs(gamepad1.left_stick_x) < 0.1 && Math.abs(gamepad1.left_stick_y) < 0.1) {
             rightmotorS = 0;
             leftmotorS = 0;
         }
@@ -353,10 +358,12 @@ public class Drivecode extends LinearOpMode {
         //assign power
         robot.leftMotor.setPower(leftmotorS);
         robot.rightMotor.setPower(rightmotorS);
+        
+
     }
 
 
-    public void Telemetry(){
+    public void Telemetry() {
         //acutal driver feed
         telemetry.addData("Speed", speeds[speed]);
         telemetry.addData("Shot Count", shotCount);
@@ -364,7 +371,7 @@ public class Drivecode extends LinearOpMode {
         telemetry.addData("Decelerate", decelerate);
 
         //useful
-        if (false){
+        if (false) {
             telemetry.addData("Gyro", robot.gyro.getHeading());
             telemetry.addData("Left", robot.leftcolor.blue());
             telemetry.addData("Right", robot.rightcolor.red());
@@ -373,21 +380,21 @@ public class Drivecode extends LinearOpMode {
         }
 
         //encoders
-        if (false){
+        if (false) {
             telemetry.addData("Encoder Left", robot.leftMotor.getCurrentPosition());
             telemetry.addData("Encoder Right", robot.rightMotor.getCurrentPosition());
-            telemetry.addData("Encoder Lift1", robot.cap1.getCurrentPosition());
-            telemetry.addData("Encoder Lift2", robot.cap2.getCurrentPosition());
+            //  telemetry.addData("Encoder Lift1", robot.cap1.getCurrentPosition());
+            // telemetry.addData("Encoder Lift2", robot.cap2.getCurrentPosition());
         }
 
         //deceleration telemetry
-        if (false){
+        if (false) {
             telemetry.addData("speed inputed", (-1 * speeds[speed] * (runtime.seconds() - decelerateStart) / 0.4) + speeds[speed]);
             telemetry.addData("timing", runtime.seconds() - decelerateStart < 0.4);
         }
 
         //shooting telemetry
-        if (false){
+        if (false) {
             telemetry.addData("Black", black);
             telemetry.addData("Fire", fire);
             telemetry.addData("Cock", cock);
@@ -402,7 +409,7 @@ public class Drivecode extends LinearOpMode {
     }
 
 
-    public void gyroCorrect(){
+    public void gyroCorrect() {
         //set gyro now
         double gyronow = runtime.seconds() - gyroLastReset;
 
